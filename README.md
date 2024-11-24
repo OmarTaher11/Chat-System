@@ -31,7 +31,7 @@ Before running the application locally, ensure you have the following installed:
 
    ```bash
    git clone <your-repository-url>
-   cd backend.challenge
+   cd Chat-System
    ```
 
 2. Build and run the application with Docker Compose:
