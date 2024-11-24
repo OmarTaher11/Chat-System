@@ -2,15 +2,15 @@ FROM openjdk:17-jdk-slim
 
 WORKDIR /app
 
-COPY mvnw .
-COPY .mvn .mvn
-COPY pom.xml .
-COPY src/ ./src
+COPY . .
+
+RUN apt-get update && apt-get install -y maven
+
 COPY wait-for-it.sh /wait-for-it.sh
 
 RUN chmod +x /wait-for-it.sh
 
-RUN ./mvnw clean package -DskipTests
+RUN mvn clean package -DskipTests
 
 EXPOSE 8080
 
