@@ -12,20 +12,44 @@ services:
       - redis
       - rabbitmq
     environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/chat_system?createDatabaseIfNotExist=true
-      SPRING_DATASOURCE_USERNAME: root
-      SPRING_DATASOURCE_PASSWORD: root
-      SPRING_ELASTICSEARCH_URIS: http://elasticsearch:9200
-      SPRING_ELASTICSEARCH_USERNAME: elastic
-      SPRING_ELASTICSEARCH_PASSWORD: elastic_password
-      SPRING_REDIS_HOST: redis
-      SPRING_REDIS_PORT: 6379
-      SPRING_RABBITMQ_HOST: rabbitmq
-      SPRING_RABBITMQ_PORT: 5672
+      - SPRING_APPLICATION_NAME=backend.challenge
+      - SCHEDULED_TASK_FIXEDRATE=1800000
+
+      ## MySQL Database Configuration
+      - SPRING_DATASOURCE_DRIVER_CLASS_NAME=com.mysql.cj.jdbc.Driver
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/chat_system?createDatabaseIfNotExist=true
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=root
+      # Uncomment for additional configurations
+      # - SPRING_JPA_HIBERNATE_DDL_AUTO=create-drop
+      # - SPRING_JPA_SHOW_SQL=true
+
+      ## Elasticsearch Configuration
+      - SPRING_ELASTICSEARCH_CLIENT_REACTIVE_ENABLED=false
+      - SPRING_ELASTICSEARCH_URIS=http://elasticsearch:9200
+      - SPRING_ELASTICSEARCH_USERNAME=elastic
+      - SPRING_ELASTICSEARCH_PASSWORD=elastic_password
+
+      ## Redis Configuration
+      - SPRING_DATA_REDIS_HOST=redis
+      - SPRING_DATA_REDIS_PORT=6379
+
+      ## RabbitMQ Configuration
+      - SPRING_RABBITMQ_LISTENER_SIMPLE_RETRY_ENABLED=false
+      - SPRING_RABBITMQ_LISTENER_SIMPLE_DEFAULT_REQUEUE_REJECTED=false
+      - SPRING_RABBITMQ_HOST=rabbitmq
+      - SPRING_RABBITMQ_PORT=5672
+
     ports:
       - "8080:8080"
-    entrypoint: ["/wait-for-it.sh", "elasticsearch:9200", "--", "java", "-jar", "target/backend.challenge-0.0.1-SNAPSHOT.jar"]
-
+    entrypoint:
+      - /wait-for-it.sh
+      - elasticsearch:9200
+      - "--"
+      - java
+      - -jar
+      - target/backend.challenge-0.0.1-SNAPSHOT.jar
 
   mysql:
     image: mysql:8.0
